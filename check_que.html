@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--MadeBy Nzt3-->
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <style type="text/css">
+      body{
+        background-color: burlywood;
+        color: black;
+        margin: 0;
+        padding: 0;
+      }
+      #header{
+        width: 100%;
+        padding: 30px;
+        background-color: blue;
+        text-align: center;
+      }
+      #inpt{
+        top: 20%;
+        text-align: center;
+        padding: 30px;
+      }
+      #expt{
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <h1>個数制限チェックボックス</h1>
+    </div>
+    <div id="inpt">
+      <div id="intro">
+      <p>作成したい選択肢を入力して、『作成』を押してください</p>
+      <p>全ての要素を作成し終えたら、同時選択可能な個数を入力してから『完了』を押してください</p>
+      </div>
+      <div id="btns">
+        <input id="val" type="text">
+        <input id="sksi" type="button" value="作成"><br>
+        <input id="num" type="number">
+        <input id="knru" type="button" value="完了">
+      </div>
+    </div>
+    <div id="expt" style="display: block;">
+      <p id="target" style="display: none;">これは入力をするときの目印となります</p>
+    </div>
+  </body>
+  <script type="text/javascript">
+  let allyus=0;
+  let youso=[];
+  let checkedyouso=[];
+  let sksi=document.getElementById("sksi");
+  let knru=document.getElementById("knru");
+  let mjrs=document.getElementById("target");
+  let strk=document.getElementById("expt");
+  sksi.addEventListener("click",add);
+  knru.addEventListener("click",setup);
+
+  function add(){
+    let newbox1 = document.createElement("p");
+    let newbox2 = document.createElement("label");
+    let newel = document.createElement("input");
+    let newtxt = document.createTextNode(document.getElementById("val").value);
+    let num = 1;
+    newel.type="checkbox";
+    newbox2.for="sentakusi"+allyus;
+    newbox2.appendChild(newel);
+    newbox2.appendChild(newtxt);
+    newbox1.appendChild(newbox2);
+    newel.setAttribute("id","sentakusi"+allyus);
+    //console.log(allyus);
+    allyus++;
+    strk.insertBefore(newbox1,mjrs);
+    document.getElementById("val").value="";
+  }
+
+  function setup(){
+    if(num.value<=0){
+      alert("同時選択可能な個数には1以上の数を入力してください")
+    }else{
+    document.getElementById("inpt").style="display:none;";
+    strk.style="display:block";
+    for(let i=0;i<allyus;i++){
+      youso[i]=document.getElementById("sentakusi"+i);
+      youso[i].addEventListener("change",queue);
+      youso[i].checked=false;
+    }
+    }
+  }
+  
+  function queue(){
+    let a=-1;
+    for(let i=0;i<allyus;i++){
+      youso[i].disabled=true;
+    }
+    for(let i=0;i<allyus;i++){
+      if(youso[i].checked){
+        if((checkedyouso.find(e => e == youso[i]))==undefined){
+          a=i;
+          break;
+        }
+      }
+    }
+    if(a!=-1){
+      if(checkedyouso.length==num.value){
+        checkedyouso[0].checked=false;
+        checkedyouso.shift();
+      }
+      checkedyouso.push(document.getElementById("sentakusi"+a));
+    }else{
+      for(let i=0;i<checkedyouso.length;i++){
+        if(!checkedyouso[i].checked){
+          checkedyouso=checkedyouso.slice(0,i).concat(checkedyouso.slice(i+1,checkedyouso.length-1));
+        }
+      }
+    }
+    //console.log(checkedyouso.length);
+    for(let i=0;i<checkedyouso.length;i++){
+      checkedyouso[i].checked=true;
+    }
+    for(let i=0;i<allyus;i++){
+      youso[i].disabled=false;
+    }
+  }
+  </script>
+</html>
